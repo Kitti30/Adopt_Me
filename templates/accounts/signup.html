@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}สมัครสมาชิก — Adopt Me{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+  <div class="bg-white rounded-3xl shadow-lg p-8">
+    <h1 class="text-2xl font-bold text-orange-500 text-center">สมัครสมาชิก 🐾</h1>
+    <form method="post" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+      <div>
+        <label for="{{ field.id_for_label }}" class="block mb-1 text-sm font-medium">{{ field.label }}</label>
+        {{ field }}
+        {% for error in field.errors %}<p class="text-sm text-red-500 mt-1">{{ error }}</p>{% endfor %}
+        {% if field.help_text %}<div class="text-xs text-slate-500 mt-1">{{ field.help_text|safe }}</div>{% endif %}
+      </div>
+      {% endfor %}
+      <button class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-3">สมัครสมาชิก</button>
+    </form>
+    <p class="mt-4 text-center text-sm text-slate-600">
+      มีบัญชีแล้ว? <a href="{% url 'accounts:login' %}" class="text-sky-600 font-medium">เข้าสู่ระบบ</a>
+    </p>
+  </div>
+</div>
+{% endblock %}
