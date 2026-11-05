@@ -23,6 +23,9 @@
           {% if user.is_staff %}
           <a href="{% url 'adoptions:review_list' %}" class="font-medium text-sky-600 hover:text-sky-700">ตรวจคำขอ</a>
           {% endif %}
+          {% if user.is_superuser %}
+          <a href="{% url 'admin:index' %}" class="font-medium text-orange-600 hover:text-orange-700">ผู้ดูแลระบบ</a>
+          {% endif %}
           <span class="hidden sm:inline text-slate-600">สวัสดี, {{ user.username }}</span>
           <form method="post" action="{% url 'accounts:logout' %}">
             {% csrf_token %}
