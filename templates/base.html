@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Adopt Me — หาบ้านให้น้อง{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @theme { --font-sans: "Prompt", ui-sans-serif, system-ui, sans-serif; }
+  </style>
+</head>
+<body class="bg-amber-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+  <header class="bg-white shadow-sm sticky top-0 z-10">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="{% url 'core:home' %}" class="text-2xl font-bold text-orange-500">🐾 Adopt Me</a>
+      <div class="flex items-center gap-3 sm:gap-5 text-sm sm:text-base">
+        <a href="#" class="hover:text-orange-500">น้อง ๆ ที่รอบ้าน</a>
+        <a href="#" class="hover:text-orange-500">เข้าสู่ระบบ</a>
+        <a href="#" class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-full font-medium">สมัครสมาชิก</a>
+      </div>
+    </nav>
+  </header>
+
+  {% if messages %}
+  <div class="max-w-6xl mx-auto px-4 mt-4 w-full">
+    {% for message in messages %}
+    <div class="bg-sky-100 text-sky-800 rounded-xl px-4 py-3 mb-2">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <main class="flex-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-white border-t mt-12">
+    <div class="max-w-6xl mx-auto px-4 py-6 text-center text-sm text-slate-500">
+      🐾 Adopt Me — ให้ทุกชีวิตมีบ้าน
+    </div>
+  </footer>
+</body>
+</html>
