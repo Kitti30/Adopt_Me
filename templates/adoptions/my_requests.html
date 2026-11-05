@@ -13,14 +13,8 @@
       <div class="flex-1">
         <a href="{% url 'pets:detail' r.pet.pk %}" class="text-lg font-semibold hover:text-orange-500">{{ r.pet.name }}</a>
         <p class="text-sm text-slate-500">ส่งเมื่อ {{ r.created_at|date:"j M Y H:i" }}</p>
-        <span class="inline-block mt-2 text-sm px-3 py-1 rounded-full font-medium
-          {% if r.status == 'approved' %}bg-emerald-100 text-emerald-700
-          {% elif r.status == 'rejected' %}bg-red-100 text-red-700
-          {% elif r.status == 'verified' %}bg-sky-100 text-sky-700
-          {% elif r.status == 'cancelled' %}bg-slate-200 text-slate-600
-          {% else %}bg-amber-100 text-amber-700{% endif %}">
-          {{ r.get_status_display }}
-        </span>
+        <div class="mt-2">{% include "adoptions/_status_badge.html" with r=r %}</div>
+        {% if r.staff_note %}<p class="text-sm text-slate-600 mt-2">💬 ทีมงาน: {{ r.staff_note }}</p>{% endif %}
       </div>
       {% if r.status == 'pending' or r.status == 'verified' %}
       <form method="post" action="{% url 'adoptions:cancel' r.pk %}"

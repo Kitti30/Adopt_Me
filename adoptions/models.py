@@ -55,6 +55,15 @@ class AdoptionRequest(models.Model):
     agree_terms = models.BooleanField("ยืนยันว่าจะดูแลตลอดชีวิต ไม่ทอดทิ้ง และพาไปฉีดวัคซีนตามกำหนด", default=False)
 
     status = models.CharField("สถานะ", max_length=10, choices=Status.choices, default=Status.PENDING)
+    # ส่วนของทีมงาน
+    phone_verified = models.BooleanField("โทรยืนยันตัวตนแล้ว", default=False)
+    home_verified = models.BooleanField("ตรวจสอบที่พัก/ข้อมูลแล้ว", default=False)
+    staff_note = models.TextField("ข้อความจากทีมงาน (ผู้ขอเห็น)", blank=True, default="")
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="reviewed_requests",
+    )
+    reviewed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -70,3 +79,16 @@ class AdoptionRequest(models.Model):
 
     def __str__(self):
         return f"{self.applicant.username} → {self.pet.name} ({self.get_status_display()})"
+
+    @property
+    def risk_flags(self):
+        flags = []
+        if self.hours_alone > 8:
+            flags.append(f"ต้องทิ้งน้องไว้คนเดียวนาน {self.hours_alone} ชม./วัน")
+        if self.monthly_budget == self.Budget.LOW:
+            flags.append("งบดูแลต่ำกว่า 1,000 บาท/เดือน")
+        if self.ownership == self.Ownership.RENT:
+            flags.append("เป็นผู้เช่า ควรยืนยันกับเจ้าของที่พัก")
+        if len(self.experience.strip()) < 20:
+            flags.append("ตอบเรื่องประสบการณ์สั้นมาก")
+        return flags

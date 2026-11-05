@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}ตรวจคำขอ {{ req.pet.name }} — Adopt Me{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <a href="{% url 'adoptions:review_list' %}" class="text-sky-600 hover:underline">← กลับไปรายการคำขอ</a>
+
+  <div class="mt-4 grid gap-6 lg:grid-cols-3">
+    <div class="lg:col-span-2 space-y-6">
+
+      <div class="bg-white rounded-3xl shadow p-4 flex items-center gap-4">
+        <img src="{{ req.pet.photo.url }}" alt="{{ req.pet.name }}" class="w-24 h-24 rounded-2xl object-cover">
+        <div class="flex-1">
+          <a href="{% url 'pets:detail' req.pet.pk %}" class="text-xl font-bold hover:text-orange-500">{{ req.pet.name }}</a>
+          <p class="text-sm text-slate-500">{{ req.pet.get_species_display }} · {{ req.pet.age_display }} · 📍 {{ req.pet.province }}</p>
+          <p class="text-sm text-slate-500">สถานะน้อง: {{ req.pet.get_status_display }}</p>
+        </div>
+        {% with r=req %}{% include "adoptions/_status_badge.html" %}{% endwith %}
+      </div>
+
+      <div class="bg-white rounded-3xl shadow p-6">
+        <h2 class="font-bold text-orange-500">ข้อมูลผู้ขอ</h2>
+        <dl class="mt-3 grid grid-cols-2 gap-4 text-sm">
+          <div><dt class="text-slate-500">ชื่อผู้ใช้</dt><dd class="font-medium">{{ req.applicant.username }}</dd></div>
+          <div><dt class="text-slate-500">อีเมล</dt><dd class="font-medium">{{ req.applicant.email|default:"-" }}</dd></div>
+          <div><dt class="text-slate-500">เบอร์โทร</dt><dd class="font-medium">{{ req.applicant.profile.phone|default:"-" }}</dd></div>
+          <div><dt class="text-slate-500">จังหวัด</dt><dd class="font-medium">{{ req.applicant.profile.province|default:"-" }}</dd></div>
+        </dl>
+      </div>
+
+      {% if req.risk_flags %}
+      <div class="bg-orange-50 border border-orange-200 rounded-3xl p-6">
+        <h2 class="font-bold text-orange-600">⚠️ จุดที่ควรระวัง</h2>
+        <ul class="mt-2 list-disc pl-5 text-sm text-orange-800 space-y-1">
+          {% for flag in req.risk_flags %}<li>{{ flag }}</li>{% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="bg-white rounded-3xl shadow p-6">
+        <h2 class="font-bold text-sky-500">แบบสอบถามความพร้อม</h2>
+        <dl class="mt-3 grid sm:grid-cols-2 gap-4 text-sm">
+          <div><dt class="text-slate-500">ประเภทที่พัก</dt><dd class="font-medium">{{ req.get_housing_type_display }}</dd></div>
+          <div><dt class="text-slate-500">สถานะที่พัก</dt><dd class="font-medium">{{ req.get_ownership_display }}</dd></div>
+          <div><dt class="text-slate-500">ที่พักอนุญาตให้เลี้ยงสัตว์</dt><dd class="font-medium">{{ req.landlord_allows_pets|yesno:"ใช่,ไม่ใช่" }}</dd></div>
+          <div><dt class="text-slate-500">จำนวนคนในบ้าน</dt><dd class="font-medium">{{ req.household_members }} คน</dd></div>
+          <div><dt class="text-slate-500">ทุกคนในบ้านเห็นด้วย</dt><dd class="font-medium">{{ req.all_agree|yesno:"ใช่,ไม่ใช่" }}</dd></div>
+          <div><dt class="text-slate-500">มีสัตว์เลี้ยงอื่น</dt><dd class="font-medium">{{ req.has_other_pets|yesno:"มี,ไม่มี" }}{% if req.other_pets_detail %} ({{ req.other_pets_detail }}){% endif %}</dd></div>
+          <div><dt class="text-slate-500">ชั่วโมงที่น้องอยู่คนเดียว/วัน</dt><dd class="font-medium">{{ req.hours_alone }} ชม.</dd></div>
+          <div><dt class="text-slate-500">งบดูแลต่อเดือน</dt><dd class="font-medium">{{ req.get_monthly_budget_display }}</dd></div>
+        </dl>
+        <div class="mt-4 text-sm">
+          <p class="text-slate-500">ประสบการณ์การเลี้ยงสัตว์</p>
+          <div class="font-medium">{{ req.experience|linebreaks }}</div>
+        </div>
+        <div class="mt-4 text-sm">
+          <p class="text-slate-500">เหตุผลที่อยากรับเลี้ยง</p>
+          <div class="font-medium">{{ req.reason|linebreaks }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      {% if req.status == 'pending' %}
+      <form method="post" action="{% url 'adoptions:verify' req.pk %}" class="bg-white rounded-3xl shadow p-6 space-y-3">
+        {% csrf_token %}
+        <h2 class="font-bold text-sky-500">1. ตรวจสอบผู้ขอ</h2>
+        <label class="flex items-start gap-3 text-sm">
+          <input type="checkbox" name="phone_verified" class="mt-0.5 h-5 w-5 accent-sky-500">
+          โทรยืนยันตัวตนและเจตนาของผู้ขอแล้ว
+        </label>
+        <label class="flex items-start gap-3 text-sm">
+          <input type="checkbox" name="home_verified" class="mt-0.5 h-5 w-5 accent-sky-500">
+          ตรวจสอบที่พัก/ข้อมูลในแบบสอบถามแล้ว
+        </label>
+        <button class="w-full bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-2xl py-3">ยืนยันว่าตรวจสอบแล้ว</button>
+      </form>
+      {% endif %}
+
+      {% if req.status == 'verified' %}
+      <form method="post" action="{% url 'adoptions:approve' req.pk %}"
+            onsubmit="return confirm('ยืนยันอนุมัติ? น้องจะเปลี่ยนเป็น ได้บ้านแล้ว และคำขอของคนอื่นจะถูกปฏิเสธ')"
+            class="bg-white rounded-3xl shadow p-6 space-y-3">
+        {% csrf_token %}
+        <h2 class="font-bold text-emerald-600">2. อนุมัติ</h2>
+        <p class="text-sm text-slate-500">ตรวจสอบแล้วโดย {{ req.reviewed_by.username }} · {{ req.reviewed_at|date:"j M Y H:i" }}</p>
+        <textarea name="note" rows="3" placeholder="ข้อความถึงผู้ขอ เช่น นัดรับน้องวันไหน (ไม่บังคับ)"
+                  class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm"></textarea>
+        <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold rounded-2xl py-3">✅ อนุมัติ</button>
+      </form>
+      {% endif %}
+
+      {% if req.status == 'pending' or req.status == 'verified' %}
+      <form method="post" action="{% url 'adoptions:reject' req.pk %}" class="bg-white rounded-3xl shadow p-6 space-y-3">
+        {% csrf_token %}
+        <h2 class="font-bold text-red-500">ไม่อนุมัติ</h2>
+        <textarea name="note" rows="3" required placeholder="เหตุผล (ผู้ขอจะเห็นข้อความนี้)"
+                  class="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm"></textarea>
+        <button class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold rounded-2xl py-3">ไม่อนุมัติ</button>
+      </form>
+      {% else %}
+      <div class="bg-white rounded-3xl shadow p-6 text-sm space-y-2">
+        <h2 class="font-bold">ผลการพิจารณา</h2>
+        {% with r=req %}{% include "adoptions/_status_badge.html" %}{% endwith %}
+        {% if req.reviewed_by %}<p class="text-slate-500">โดย {{ req.reviewed_by.username }} · {{ req.reviewed_at|date:"j M Y H:i" }}</p>{% endif %}
+        {% if req.staff_note %}<p>💬 {{ req.staff_note }}</p>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

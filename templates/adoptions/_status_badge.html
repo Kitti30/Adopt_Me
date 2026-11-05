@@ -1,0 +1,8 @@
+<span class="inline-block text-sm px-3 py-1 rounded-full font-medium
+  {% if r.status == 'approved' %}bg-emerald-100 text-emerald-700
+  {% elif r.status == 'rejected' %}bg-red-100 text-red-700
+  {% elif r.status == 'verified' %}bg-sky-100 text-sky-700
+  {% elif r.status == 'cancelled' %}bg-slate-200 text-slate-600
+  {% else %}bg-amber-100 text-amber-700{% endif %}">
+  {{ r.get_status_display }}
+</span>
