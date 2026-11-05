@@ -39,8 +39,10 @@
       </div>
 
       <div class="mt-8">
-        {% if pet.status == 'available' %}
-        <a href="#" class="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-3">
+        {% if pet.posted_by == user %}
+        <div class="text-center bg-sky-50 text-sky-700 rounded-2xl py-3">นี่คือประกาศของคุณ</div>
+        {% elif pet.status == 'available' %}
+        <a href="{% url 'adoptions:apply' pet.pk %}" class="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-3">
           💌 ยื่นคำขอรับเลี้ยง
         </a>
         {% else %}
