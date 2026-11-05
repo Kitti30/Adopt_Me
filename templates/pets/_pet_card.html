@@ -1,0 +1,22 @@
+<a href="{% url 'pets:detail' pet.pk %}"
+   class="group block bg-white rounded-3xl shadow hover:shadow-xl transition overflow-hidden">
+  <div class="aspect-[4/3] bg-amber-100 overflow-hidden">
+    <img src="{{ pet.photo.url }}" alt="{{ pet.name }}"
+         class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+  </div>
+  <div class="p-4">
+    <div class="flex items-center justify-between gap-2">
+      <h3 class="font-semibold text-lg">{{ pet.name }}</h3>
+      <span class="text-xs px-2 py-1 rounded-full font-medium
+        {% if pet.status == 'available' %}bg-emerald-100 text-emerald-700
+        {% elif pet.status == 'pending' %}bg-amber-100 text-amber-700
+        {% else %}bg-slate-200 text-slate-600{% endif %}">
+        {{ pet.get_status_display }}
+      </span>
+    </div>
+    <p class="text-sm text-slate-500 mt-1">
+      {{ pet.get_species_display }}{% if pet.breed %} · {{ pet.breed }}{% endif %}
+    </p>
+    <p class="text-sm text-slate-500 mt-1">🎂 {{ pet.age_display }} · 📍 {{ pet.province }}</p>
+  </div>
+</a>

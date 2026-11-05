@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}น้อง ๆ ที่รอบ้าน — Adopt Me{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+  <h1 class="text-3xl font-bold text-orange-500">น้อง ๆ ที่รอบ้าน 🐾</h1>
+
+  <form method="get" class="mt-6 bg-white rounded-3xl shadow p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+    <input name="q" value="{{ f.q }}" placeholder="ชื่อ / สายพันธุ์"
+           class="rounded-2xl border border-slate-200 px-4 py-3">
+    <select name="species" class="rounded-2xl border border-slate-200 px-4 py-3">
+      <option value="">ทุกชนิด</option>
+      {% for value, label in species_choices %}
+      <option value="{{ value }}" {% if f.species == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <select name="age" class="rounded-2xl border border-slate-200 px-4 py-3">
+      <option value="">ทุกช่วงอายุ</option>
+      {% for value, label in age_choices %}
+      <option value="{{ value }}" {% if f.age == value %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <input name="area" value="{{ f.area }}" placeholder="พื้นที่ เช่น กรุงเทพฯ"
+           class="rounded-2xl border border-slate-200 px-4 py-3">
+    <div class="flex gap-2">
+      <button class="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-semibold rounded-2xl px-4 py-3">ค้นหา</button>
+      <a href="{% url 'pets:list' %}" class="rounded-2xl bg-slate-100 hover:bg-slate-200 px-4 py-3">ล้าง</a>
+    </div>
+  </form>
+
+  <p class="mt-6 text-slate-500">พบ {{ page_obj.paginator.count }} ตัว</p>
+
+  {% if page_obj %}
+  <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {% for pet in page_obj %}{% include "pets/_pet_card.html" %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="mt-8 bg-white rounded-3xl shadow p-10 text-center text-slate-500">
+    <div class="text-5xl">🔍</div>
+    <p class="mt-3">ไม่พบน้องที่ตรงกับการค้นหา ลองปรับเงื่อนไขดูนะ</p>
+  </div>
+  {% endif %}
+
+  {% if page_obj.has_other_pages %}
+  <div class="mt-8 flex items-center justify-center gap-4">
+    {% if page_obj.has_previous %}
+    <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}"
+       class="bg-white shadow rounded-full px-5 py-2 hover:bg-amber-100">← ก่อนหน้า</a>
+    {% endif %}
+    <span class="text-slate-500">หน้า {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+    <a href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}"
+       class="bg-white shadow rounded-full px-5 py-2 hover:bg-amber-100">ถัดไป →</a>
+    {% endif %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

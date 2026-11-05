@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ pet.name }} — Adopt Me{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+  <a href="{% url 'pets:list' %}" class="text-sky-600 hover:underline">← กลับไปรายการ</a>
+
+  <div class="mt-4 bg-white rounded-3xl shadow-lg overflow-hidden grid md:grid-cols-2">
+    <img src="{{ pet.photo.url }}" alt="{{ pet.name }}" class="w-full h-full max-h-[32rem] object-cover">
+
+    <div class="p-6 sm:p-8">
+      <div class="flex items-start justify-between gap-3">
+        <h1 class="text-3xl font-bold">{{ pet.name }}</h1>
+        <span class="text-sm px-3 py-1 rounded-full font-medium
+          {% if pet.status == 'available' %}bg-emerald-100 text-emerald-700
+          {% elif pet.status == 'pending' %}bg-amber-100 text-amber-700
+          {% else %}bg-slate-200 text-slate-600{% endif %}">
+          {{ pet.get_status_display }}
+        </span>
+      </div>
+
+      <div class="mt-3 flex flex-wrap gap-2 text-sm">
+        {% if pet.is_vaccinated %}<span class="bg-sky-100 text-sky-700 rounded-full px-3 py-1">💉 ฉีดวัคซีนแล้ว</span>{% endif %}
+        {% if pet.is_neutered %}<span class="bg-orange-100 text-orange-700 rounded-full px-3 py-1">✂️ ทำหมันแล้ว</span>{% endif %}
+      </div>
+
+      <dl class="mt-6 grid grid-cols-2 gap-4 text-sm">
+        <div><dt class="text-slate-500">ชนิด</dt><dd class="font-medium">{{ pet.get_species_display }}</dd></div>
+        <div><dt class="text-slate-500">สายพันธุ์</dt><dd class="font-medium">{{ pet.breed|default:"ไม่ระบุ" }}</dd></div>
+        <div><dt class="text-slate-500">เพศ</dt><dd class="font-medium">{{ pet.get_gender_display }}</dd></div>
+        <div><dt class="text-slate-500">อายุ</dt><dd class="font-medium">{{ pet.age_display }}</dd></div>
+        <div><dt class="text-slate-500">พื้นที่</dt><dd class="font-medium">📍 {{ pet.province }}</dd></div>
+        <div><dt class="text-slate-500">ผู้ลงประกาศ</dt><dd class="font-medium">{{ pet.posted_by.username }}</dd></div>
+      </dl>
+
+      <div class="mt-6">
+        <h2 class="font-semibold text-orange-500">เรื่องราวและนิสัย</h2>
+        <div class="mt-1 text-slate-700">{{ pet.description|linebreaks }}</div>
+      </div>
+
+      <div class="mt-8">
+        {% if pet.status == 'available' %}
+        <a href="#" class="block text-center bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-3">
+          💌 ยื่นคำขอรับเลี้ยง
+        </a>
+        {% else %}
+        <div class="text-center bg-slate-100 text-slate-500 rounded-2xl py-3">ขณะนี้ไม่เปิดรับคำขอ</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
