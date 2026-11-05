@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}ลงทะเบียนสัตว์ — Adopt Me{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-10">
+  <div class="bg-white rounded-3xl shadow-lg p-6 sm:p-8">
+    <h1 class="text-2xl font-bold text-orange-500">ลงทะเบียนสัตว์ที่ต้องการหาบ้าน 🐶🐱</h1>
+    <p class="text-slate-500 mt-1">กรอกข้อมูลน้องให้ครบ เพื่อให้คนใจดีเห็นและตัดสินใจรับเลี้ยงได้ง่ายขึ้น</p>
+
+    <form method="post" enctype="multipart/form-data" class="mt-6 space-y-4">
+      {% csrf_token %}
+      {% for field in form %}
+      <div>
+        {% if field.field.widget.input_type == "checkbox" %}
+          <label class="flex items-center gap-3">
+            {{ field }}
+            <span class="font-medium">{{ field.label }}</span>
+          </label>
+        {% else %}
+          <label for="{{ field.id_for_label }}" class="block mb-1 text-sm font-medium">{{ field.label }}</label>
+          {{ field }}
+        {% endif %}
+        {% if field.help_text %}<p class="text-xs text-slate-500 mt-1">{{ field.help_text }}</p>{% endif %}
+        {% for error in field.errors %}<p class="text-sm text-red-500 mt-1">{{ error }}</p>{% endfor %}
+      </div>
+      {% endfor %}
+      <button class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-2xl py-3">
+        ลงทะเบียน
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
