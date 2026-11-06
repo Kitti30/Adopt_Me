@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -18,31 +19,46 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            steps { checkout scm }
+            steps {
+                checkout scm
+            }
         }
+
         stage('Setup Environment') {
             steps {
                 sh '''
+                    set +x
+                    umask 077
                     cat > .env <<EOF
-        POSTGRES_DB=${POSTGRES_DB}
-        POSTGRES_USER=${POSTGRES_USER}
-        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-        POSTGRES_HOST=db
-        DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-        DJANGO_DEBUG=0
-        EOF
+POSTGRES_DB=${POSTGRES_DB}
+POSTGRES_USER=${POSTGRES_USER}
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+POSTGRES_HOST=db
+DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+DJANGO_DEBUG=0
+EOF
                 '''
             }
         }
+
         stage('Build') {
-            steps { sh '$COMPOSE build' }
+            steps {
+                sh '$COMPOSE build'
+            }
         }
+
         stage('Test') {
-            steps { sh '$COMPOSE run --rm -T web sh -c "coverage run manage.py test && coverage report"' }
+            steps {
+                sh '$COMPOSE run --rm -T web sh -c "coverage run manage.py test && coverage report"'
+            }
         }
+
         stage('Deploy') {
-            steps { sh '$COMPOSE up -d' }
+            steps {
+                sh '$COMPOSE up -d'
+            }
         }
+
         stage('Verify') {
             steps {
                 sh '''
@@ -61,7 +77,12 @@ pipeline {
     }
 
     post {
-        failure { sh '$COMPOSE logs --tail=50 || true' }
-        success { echo 'Deployed: http://localhost:8001' }
+        failure {
+            sh '$COMPOSE logs --tail=50 || true'
+        }
+
+        success {
+            echo 'Deployed: http://localhost:8001'
+        }
     }
 }
