@@ -55,7 +55,10 @@ EOF
 
         stage('Deploy') {
             steps {
-                sh '$COMPOSE up -d'
+                sh '''
+                    $COMPOSE run --rm -T web python manage.py migrate --noinput
+                    $COMPOSE up -d
+                '''
             }
         }
 
