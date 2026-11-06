@@ -7,13 +7,32 @@ pipeline {
 
     environment {
         COMPOSE = 'docker compose -p adopt_me_ci -f docker-compose.yml'
+
         DB_PASSWORD = credentials('adopt-db-password')
         DJANGO_SECRET_KEY = credentials('adopt-secret-key')
+
+        POSTGRES_DB = 'adoption'
+        POSTGRES_USER = 'adoption'
+        POSTGRES_PASSWORD = credentials('adopt-db-password')
     }
 
     stages {
         stage('Checkout') {
             steps { checkout scm }
+        }
+        stage('Setup Environment') {
+            steps {
+                sh '''
+                    cat > .env <<EOF
+        POSTGRES_DB=${POSTGRES_DB}
+        POSTGRES_USER=${POSTGRES_USER}
+        POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+        POSTGRES_HOST=db
+        DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+        DJANGO_DEBUG=0
+        EOF
+                '''
+            }
         }
         stage('Build') {
             steps { sh '$COMPOSE build' }
