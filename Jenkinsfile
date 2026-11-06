@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        COMPOSE = 'docker compose -p adopt_me_ci -f docker-compose.prod.yml'
+        COMPOSE = 'docker compose -p adopt_me_ci -f docker-compose.yml'
         DB_PASSWORD = credentials('adopt-db-password')
         DJANGO_SECRET_KEY = credentials('adopt-secret-key')
     }
