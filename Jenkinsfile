@@ -1,4 +1,3 @@
-
 pipeline {
     agent any
 
@@ -9,9 +8,7 @@ pipeline {
     environment {
         COMPOSE = 'docker compose -p adopt_me_ci -f docker-compose.yml'
 
-        DB_PASSWORD = credentials('adopt-db-password')
         DJANGO_SECRET_KEY = credentials('adopt-secret-key')
-
         POSTGRES_DB = 'adoption'
         POSTGRES_USER = 'adoption'
         POSTGRES_PASSWORD = credentials('adopt-db-password')
@@ -35,7 +32,8 @@ POSTGRES_USER=${POSTGRES_USER}
 POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 POSTGRES_HOST=db
 DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-DJANGO_DEBUG=0
+DJANGO_DEBUG=1
+WEB_PORT=8001
 EOF
                 '''
             }
@@ -86,6 +84,10 @@ EOF
 
         success {
             echo 'Deployed: http://localhost:8001'
+        }
+
+        cleanup {
+            sh 'rm -f .env'
         }
     }
 }
