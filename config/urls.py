@@ -8,6 +8,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("pets/", include("pets.urls")),
     path("adoptions/", include("adoptions.urls")),
+    path("", include("django_prometheus.urls")),
     path("", include("core.urls")),
 ]
 

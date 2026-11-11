@@ -3,3 +3,4 @@ psycopg[binary]>=3.2
 Pillow>=10.0
 gunicorn>=22.0
 coverage>=7.6
+django-prometheus>=2.3.1
