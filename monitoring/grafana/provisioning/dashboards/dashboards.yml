@@ -1,0 +1,7 @@
+apiVersion: 1
+providers:
+  - name: adopt-me
+    folder: Adopt Me
+    type: file
+    options:
+      path: /etc/grafana/dashboards-json
