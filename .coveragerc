@@ -1,6 +1,7 @@
 [run]
 source = .
 omit =
+    */management/*
     */migrations/*
     */tests.py
     */test_*.py
