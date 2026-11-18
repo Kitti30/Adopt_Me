@@ -8,6 +8,8 @@ cd Adopt_Me
 docker compose --profile monitoring up -d --build
 ```
 http://localhost:8000
+http://localhost:9090/targets
+http://localhost:3000
 
 ### บัญชีทดลอง รหัสผ่านทุกบัญชี: `Demo12345!`
 
