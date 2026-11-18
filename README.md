@@ -15,6 +15,8 @@ http://localhost:8000
 | `owner1` | ผู้ลงประกาศสัตว์ | ลงทะเบียนสัตว์
 | `somchai` | ผู้ขอรับเลี้ยง | ยื่นคำขอ ดูสถานะ 
 
+###
+Grafana admin / admin
 ### เครื่องมือเสริม
 ```bash
 docker compose exec web python manage.py test                  # รันชุดทดสอบ
