@@ -5,7 +5,7 @@
 ```bash
 git clone https://github.com/Kitti30/Adopt_Me.git
 cd Adopt_Me
-docker compose up -d --build
+docker compose --profile monitoring up -d --build
 ```
 http://localhost:8000
 
